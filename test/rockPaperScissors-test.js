@@ -61,14 +61,40 @@ describe("RockPaperScissors", function () {
     console.log("Bob End Balance: " + y);
     assert.equal(x, 75);
     assert.equal(y, 25);
+    
+  });
+  });
+
+   describe("Player 2 doesn't reveal", () => {
+    it('Should not deduct funds from Player 1', async () => {
+    
+    x = await rpctoken.balanceOf(Alice.address);
+    y = await rpctoken.balanceOf(Bob.address);
+    console.log("Alice Starting Balance: " + x);
+    console.log("Bob Starting Balance: " + y);
+    await rps.connect(Bob).createGame(Alice.address, 5);
+    await rps.connect(Alice).joinGame(3); 
+    await rps.connect(Bob).commitMove(3, scissors, salt1);
+    await rps.connect(Alice).commitMove(3, paper, salt2);
+    await rps.connect(Bob).revealMove(3, scissors, salt1);
+    //await rps.connect(Alice).revealMove(3, paper, salt2);
+    console.log("****************************************");
+    x = await rpctoken.balanceOf(Alice.address);
+    y = await rpctoken.balanceOf(Bob.address);
+    console.log("Alice End Balance: " + x);
+    console.log("Bob End Balance: " + y);
+    //assert.equal(x, 75);
+   // assert.equal(y, 25);
   });
   });
 
   describe("Negative Test Scenarios", () => {
     it('Should NOT create game with 60 tokens', async () => {
       await rps.connect(Bob).createGame(Alice.address, 60);
+      
     });    
   });
+
 
 
 });
