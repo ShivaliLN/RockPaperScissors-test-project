@@ -65,7 +65,7 @@ describe("RockPaperScissors", function () {
   });
   });
 
-   describe("Player 2 doesn't reveal", () => {
+  describe("Player 2 doesn't reveal", () => {
     it('Should not deduct funds from Player 1', async () => {
     
     x = await rpctoken.balanceOf(Alice.address);
@@ -86,6 +86,35 @@ describe("RockPaperScissors", function () {
     //assert.equal(x, 75);
    // assert.equal(y, 25);
   });
+  });
+
+  describe("Full round with 0 bet", () => {
+    it('Should not payout anything', async () => {
+    
+    x = await rpctoken.balanceOf(Alice.address);
+    y = await rpctoken.balanceOf(Bob.address);
+    console.log("Alice Starting Balance: " + x);
+    console.log("Bob Starting Balance: " + y);
+    await rps.connect(Bob).createGame(Alice.address, 0);
+    await rps.connect(Alice).joinGame(4); 
+    await rps.connect(Bob).commitMove(4, scissors, salt1);
+    await rps.connect(Alice).commitMove(4, paper, salt2);
+    await rps.connect(Bob).revealMove(4, scissors, salt1);
+    await rps.connect(Alice).revealMove(4, paper, salt2);
+    console.log("****************************************");
+    x = await rpctoken.balanceOf(Alice.address);
+    y = await rpctoken.balanceOf(Bob.address);
+    console.log("Alice End Balance: " + x);
+    console.log("Bob End Balance: " + y);
+      
+  });
+
+  it('Should still move state to revealed', async () => {
+    const game = await rps.games(4);
+    assert.equal(game.bet.toNumber(), 0);      
+    assert.equal(game.state, 3);
+  });
+
   });
 
   describe("Negative Test Scenarios", () => {
